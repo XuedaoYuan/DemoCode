@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Worker</title>
+  </head>
+  <body>
+    <script id="worker" type="text/worker">
+      self.addEventListener('message', event => {
+          self.postMessage(event.data + '----- from worker')
+      })
+    </script>
+    <script>
+      var blob = new Blob([document.querySelector('#worker').textContent]);
+
+      var url = window.URL.createObjectURL(blob);
+      var worker = new Worker(url);
+
+      worker.onmessage = function (e) {
+        // e.data === 'some message'
+        console.log(e.data);
+      };
+
+      worker.postMessage('hello');
+    </script>
+  </body>
+</html>
