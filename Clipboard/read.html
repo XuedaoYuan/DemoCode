@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>read.html</title>
+  </head>
+  <body>
+    <button onclick="getClipboardContents()">read</button>
+    <button onclick="handleWriteImageAdnText()">write img and text</button>
+    <p>
+      <input
+        id="input_for_copy"
+        type="text"
+        placeholder="text to copy"
+        value=""
+      />
+      <button id="write_text" onclick="handleWriteText()">write text</button>
+    </p>
+    <script>
+      const input_for_copy = document.querySelector('#input_for_copy');
+      const write_text = document.querySelector('#write_text');
+      async function handleWriteImageAdnText() {
+        try {
+          const imgURL = 'https://dummyimage.com/300.png';
+          const data = await fetch(imgURL);
+          const blob = await data.blob();
+          const textBlob = new Blob(['hello, world'], {
+            type: 'text/plain'
+          });
+          const htmlBlob = new Blob(['<p style="color: red;">hello, world</p>'], {
+            type: 'text/html'
+          });
+
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              [blob.type]: blob,
+              [textBlob.type]: textBlob,
+              [htmlBlob.type]: htmlBlob,
+            })
+          ]);
+          console.log('Image copied.');
+        } catch (err) {
+          console.error(err.name, err.message);
+        }
+      }
+      async function handleWriteText() {
+        try {
+          if (!input_for_copy.value) return;
+          const blob = new Blob([input_for_copy.value], { type: 'text/plain' });
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              [blob.type]: blob
+            })
+          ]);
+          write_text.textContent = write_text.textContent + ' copy success!';
+        } catch (err) {
+          console.error(err.name, err.message);
+        }
+      }
+      async function getClipboardContents() {
+        try {
+          const clipboardItems = await navigator.clipboard.read();
+          console.log(clipboardItems);
+          for (const item of clipboardItems) {
+            for (const type of item.types) {
+              const blob = await item.getType(type);
+              readBlobData(blob, type);
+              console.log(blob);
+              //   console.log(URL.createObjectURL(blob));
+            }
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      function readBlobData(blob, type) {
+        let reader = new FileReader();
+        reader.onloadend = function () {
+          console.log(reader.result);
+          const p = document.createElement('p');
+          switch (type) {
+            case 'text/plain':
+              p.textContent = '读取结果： ' + reader.result;
+              break;
+            case 'text/html':
+              p.innerHTML = reader.result;
+              break;
+            case 'image/png':
+              const img = new Image();
+              img.src = reader.result;
+              p.appendChild(img);
+              break;
+
+            default:
+              break;
+          }
+
+          document.body.appendChild(p);
+          reader.abort();
+          reader = null;
+        };
+        if (type === 'image/png') {
+          reader.readAsDataURL(blob);
+        } else {
+          reader.readAsText(blob, 'UTF-8'); // hello, world
+        }
+      }
+    </script>
+  </body>
+</html>
