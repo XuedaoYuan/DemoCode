@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <p>asdasdasdasd</p>
+    <input type="text" />
+    <input type="text" id="password" />
+    <script>
+      const psd = document.querySelector('#password');
+      psd.addEventListener('paste', e => {
+        e.preventDefault();
+        console.log(e);
+        navigator.clipboard.readText().then(res => {
+          console.log(res);
+        });
+      });
+      psd.addEventListener('copy', e => {
+        console.log(e);
+        e.preventDefault();
+        e.stopPropagation();
+      });
+    </script>
+  </body>
+</html>

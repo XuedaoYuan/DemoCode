@@ -8,7 +8,7 @@
   </head>
   <body>
     <button onclick="getClipboardContents()">read</button>
-    <button onclick="handleWriteImageAdnText()">write img and text</button>
+    <button onclick="handleWriteImageAndText()">write img and text</button>
     <p>
       <input
         id="input_for_copy"
@@ -21,7 +21,7 @@
     <script>
       const input_for_copy = document.querySelector('#input_for_copy');
       const write_text = document.querySelector('#write_text');
-      async function handleWriteImageAdnText() {
+      async function handleWriteImageAndText() {
         try {
           const imgURL = 'https://dummyimage.com/300.png';
           const data = await fetch(imgURL);

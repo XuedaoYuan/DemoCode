@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>clipboardjs.html</title>
+  </head>
+  <body>
+    <!-- Target -->
+    <input id="foo" value="https://github.com/zenorocha/clipboard.js.git" />
+
+    <!-- Trigger -->
+    <button class="btn" data-clipboard-target="#foo">copy</button>
+    <button
+      class="btn"
+      data-clipboard-action="cut"
+      data-clipboard-target="#foo"
+    >
+      cut
+    </button>
+    <button
+      class="btn"
+      title="Just because you can doesn't mean you should — clipboard.js"
+      data-clipboard-text="Just because you can doesn't mean you should — clipboard.js"
+    >
+      Copy title to clipboard
+    </button>
+
+    <button id="dynamic_btn">dynamic text copy</button>
+    <script src="./clipboard.min.js"></script>
+    <script>
+      const foo_input = document.querySelector('#foo');
+      setTimeout(() => {
+        foo_input.value = 'changed value';
+      }, 2000);
+
+      const clipboard = new ClipboardJS('.btn');
+      clipboard.on('success', e => {
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        // 取消选中效果
+        e.clearSelection();
+      });
+
+      const dynamic_btn = document.querySelector('#dynamic_btn');
+      const cpd = new ClipboardJS(dynamic_btn, {
+        text: function (trigger) {
+          console.log(trigger);
+          return Math.random() > 0.5 ? 'gt 0.5' : 'lt 0.5';
+        }
+      });
+      cpd.on('success', e => {
+        const text = e.text;
+        const p = document.createElement('p');
+        p.textContent = text;
+        document.body.appendChild(p);
+      });
+    </script>
+  </body>
+</html>
