@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=˝, initial-scale=1.0" />
+    <title>open</title>
+  </head>
+  <body>
+    <button onclick="addPersonData()">add data</button>
+    <button onclick="readPersonData()">read data</button>
+    <button onclick="readAll()">read all</button>
+    <button onclick="updateData()">update</button>
+    <button onclick="deleteData(500)">delete</button>
+    <button onclick="useIndex()">useIndex</button>
+    <script>
+      const openDBRequest = indexedDB.open('test2', 3);
+      let db = null;
+
+      openDBRequest.onupgradeneeded = function (e) {
+        console.log('onupgradeneeded', e);
+
+        db = openDBRequest.result;
+
+        // 判断是不是存在一张叫做person的表格， 不存在就新建
+        let objectStore;
+        if (!db.objectStoreNames.contains('person')) {
+          objectStore = db.createObjectStore('person', {
+            keyPath: 'id' // 设置主键是id， 可以用于建立默认的索引
+            // autoIncrement: true // 自动生成主键， 是一个递增的整数
+          });
+          //   新建对象仓库以后， 就可以建立对应的索引
+          objectStore.createIndex('name', 'name', { unique: false }); // 说明该属性是否包含重复的值
+        }
+      };
+      openDBRequest.onsuccess = function (e) {
+        console.log('onsuccess', e);
+        db = openDBRequest.result;
+      };
+      openDBRequest.onerror = function (e) {
+        console.log('onerror', e);
+      };
+
+      let id = 500;
+      function addPersonData() {
+        const personTransaction = db.transaction(['person'], 'readwrite');
+        const personObjectStore = personTransaction.objectStore('person');
+
+        // addHandler: IDBRequest
+        const addDBRequest = personObjectStore.add({
+          id: id++,
+          name: '张三',
+          age: parseInt(Math.random() * 10) + 10,
+          email: 'xxxx@123.com'
+        });
+        console.log(addDBRequest);
+        addDBRequest.onsuccess = function (e) {
+          console.log('数据写入成功');
+        };
+        addDBRequest.onerror = function (e) {
+          console.log('数据写入失败', e);
+        };
+      }
+
+      function readPersonData() {
+        const personTransaction = db.transaction(['person'], 'readonly');
+        const personObjectStore = personTransaction.objectStore('person');
+
+        const readIDBRequest = personObjectStore.get(500);
+        readIDBRequest.onerror = e => {
+          console.log('数据读取失败');
+        };
+        readIDBRequest.onsuccess = () => {
+          const { result } = readIDBRequest;
+          if (result) {
+            console.log('数据读取成功');
+            console.table(result);
+          } else {
+            console.log('没有读到数据');
+          }
+        };
+      }
+
+      function readAll() {
+        const personTransaction = db.transaction(['person'], 'readonly');
+        const personObjectStore = personTransaction.objectStore('person');
+        const cursorIDBRequest = personObjectStore.openCursor();
+        const result = [];
+        cursorIDBRequest.onsuccess = e => {
+          const { result: cursor } = cursorIDBRequest;
+          if (cursor) {
+            console.log(cursor.key, cursor.value);
+            result.push(cursor.value);
+            cursor.continue();
+          } else {
+            console.log('没有更多数据了');
+            console.log(result);
+          }
+        };
+      }
+
+      function updateData() {
+        const personTransaction = db.transaction(['person'], 'readwrite');
+        const personObjectStore = personTransaction.objectStore('person');
+
+        const putIDBRequest = personObjectStore.put({
+          id: 500,
+          name: '李四'
+        });
+        putIDBRequest.onsuccess = function () {
+          console.log('更新成功');
+        };
+        putIDBRequest.onerror = function () {
+          console.log('更新失败');
+        };
+      }
+
+      function deleteData(id = 500) {
+        console.log(id);
+        const personTransaction = db.transaction(['person'], 'readwrite');
+        const personObjectStore = personTransaction.objectStore('person');
+        const deleteIDBRequest = personObjectStore.delete(id);
+        deleteIDBRequest.onsuccess = function () {
+          console.log('删除成功');
+        };
+        deleteIDBRequest.onerror = function () {
+          console.log('删除失败');
+        };
+      }
+
+      function useIndex() {
+        const personTransaction = db.transaction(['person'], 'readonly');
+        const personObjectStore = personTransaction.objectStore('person');
+        const index = personObjectStore.index('name');
+        console.log(index);
+        const request = index.get('李四');
+        request.onsuccess = function () {
+          const { result } = request;
+          console.log(result);
+        };
+      }
+    </script>
+  </body>
+</html>
