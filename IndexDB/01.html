@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=˝, initial-scale=1.0" />
+    <title>open</title>
+  </head>
+  <body>
+    <script>
+      const openDBRequest = indexedDB.open('test', 3);
+      let db = null;
+      openDBRequest.onupgradeneeded = function (e) {
+        console.log('onupgradeneeded', e);
+      };
+      openDBRequest.onsuccess = function (e) {
+        console.log('onsuccess', e);
+        // db = e.target.result
+        // or
+        db = openDBRequest.result;
+
+        // 判断是不是存在一张叫做person的表格， 不存在就新建
+        let objectStore;
+        if (!db.objectStoreNames.contains('person')) {
+          objectStore = db.createObjectStore('person', {
+            keyPath: 'id' // 设置主键是id， 可以用于建立默认的索引
+            // autoIncrement: true // 自动生成主键， 是一个递增的整数
+          });
+          //   新建对象仓库以后， 就可以简历对应的索引
+          //   objectStore.createIndex('name', 'name', { unique: false });
+        }
+      };
+      openDBRequest.onerror = function (e) {
+        console.log('onerror', e);
+      };
+    </script>
+  </body>
+</html>
