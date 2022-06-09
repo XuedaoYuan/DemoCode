@@ -19,7 +19,6 @@
       let db = null;
 
       function deleteDb() {
-        debugger;
         const request = indexedDB.deleteDatabase('test3');
         request.onsuccess = e => {
           console.log('onsuccess', e);
