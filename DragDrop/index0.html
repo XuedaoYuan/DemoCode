@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .draggable-box {
+        padding: 8px 12px;
+        background-color: #bbb;
+        width: 200px;
+        margin-bottom: 12px;
+      }
+      .dropzone {
+        width: 400px;
+        height: 400px;
+        margin: 20px;
+        border: 2px solid #ccc;
+        transition: all 0.25s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="dragBox" class="draggable-box" draggable="true">I am draggable</div>
+    <div class="draggable-box" draggable="false">I am not draggable</div>
+    <div style="display: flex">
+      <div class="dropzone">
+        <span>drop here</span>
+      </div>
+      <div class="dropzone">
+        <span>drop here</span>
+      </div>
+    </div>
+    <script>
+      const dragBox = document.querySelector('#dragBox');
+      const dropzones = document.querySelectorAll('.dropzone');
+      let dragTarget = null;
+      dragBox.addEventListener('dragstart', e => {
+        console.log(e);
+        event.dataTransfer.setData('objData', JSON.stringify({ x: 1 }));
+        event.dataTransfer.setData('strData', 'test');
+        e.target.style.opacity = '0.5';
+        dragTarget = e.target;
+      });
+      dragBox.addEventListener('drag', e => {
+        e.preventDefault();
+      });
+      /* dragBox.addEventListener('dragover', e => {
+        e.preventDefault();
+      }); */
+      dragBox.addEventListener('dragend', e => {
+        e.preventDefault();
+        console.log('dragend', e);
+        e.target.style.opacity = '';
+      });
+      /* 采用代理是更合理的方法 */
+      for (let i = 0, len = dropzones.length; i < len; i++) {
+        const dropzone = dropzones[i];
+        /* dropzone.addEventListener('dragenter', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          // 可以做一些高亮的操作
+          e.target.style.borderColor = 'blue';
+        }); */
+        dropzone.addEventListener('dragover', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.dataTransfer.dropEffect = 'link';
+        });
+        /* dropzone.addEventListener('dragleave', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          // 可以做一些样式重置的操作
+          e.target.style.borderColor = '';
+        }); */
+        dropzone.addEventListener('drop', e => {
+          console.log('drop');
+          // 阻止一些默认事件， 比如图片预览，打开链接等功能
+          e.preventDefault();
+          const objData = event.dataTransfer.getData('objData');
+          const strData = event.dataTransfer.getData('strData');
+          console.log(objData, strData);
+          if (dragTarget) {
+            dragTarget.parentNode.removeChild(dragTarget);
+            e.target.appendChild(dragTarget);
+            dragTarget = null;
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

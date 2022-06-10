@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body,
+      .container {
+        height: 100%;
+        width: 100%;
+      }
+      .draggable-box-container {
+        display: flex;
+        align-items: center;
+        margin: 20px;
+        height: 100px;
+      }
+      .draggable-box {
+        background-color: #ccc;
+        width: 100px;
+        height: 100px;
+        /* margin-right: 10px; */
+        border: 1px solid #aaa;
+        align-self: flex-start;
+      }
+      .dropzone-container {
+        display: flex;
+      }
+      .dropzone {
+        box-sizing: content-box;
+        width: 400px;
+        height: 400px;
+        margin: 20px;
+        border: 2px solid #ccc;
+        transition: all 0.25s ease;
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="container">
+      <div class="draggable-box-container">
+        <div class="draggable-box" data-type="dragBox" draggable="true">1</div>
+        <div class="draggable-box" data-type="dragBox" draggable="true">2</div>
+        <div class="draggable-box" data-type="dragBox" draggable="true">3</div>
+        <div class="draggable-box" data-type="dragBox" draggable="true">4</div>
+        <div class="draggable-box" data-type="dragBox" draggable="true">5</div>
+        <div class="draggable-box" data-type="dragBox" draggable="true">6</div>
+        <div class="draggable-box" data-type="dragBox" draggable="true">7</div>
+        <div class="draggable-box" data-type="dragBox" draggable="true">8</div>
+        <div class="draggable-box" data-type="dragBox" draggable="true">9</div>
+        <div class="draggable-box" data-type="dragBox" draggable="true">10</div>
+      </div>
+      <div class="dropzone-container">
+        <div class="dropzone" data-type="dragZone"></div>
+        <div class="dropzone" data-type="dragZone"></div>
+        <div class="dropzone" data-type="dragZone"></div>
+      </div>
+    </div>
+
+    <script>
+      const container = document.querySelector('#container');
+      let dragTarget = null;
+      container.addEventListener('dragstart', e => {
+        if (e.target.dataset.type === 'dragBox') {
+          dragTarget = e.target;
+          dragTarget.style.opacity = '0.5';
+        }
+      });
+      container.addEventListener('dragend', e => {
+        console.log('dragend');
+        e.preventDefault();
+        if (dragTarget) {
+          dragTarget.style.opacity = '';
+          dragTarget = null;
+        }
+      });
+      container.addEventListener('dragover', e => {
+        e.preventDefault();
+      });
+      container.addEventListener('dragenter', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        // 可以做一些高亮的操作
+        if (e.target.dataset.type === 'dragZone') {
+          e.target.style.borderColor = 'blue';
+        }
+      });
+      container.addEventListener('dragleave', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        // 可以做一些样式重置的操作
+        if (e.target.dataset.type === 'dragZone') {
+          e.target.style.borderColor = '';
+        }
+      });
+
+      container.addEventListener('drop', e => {
+        // 阻止一些默认事件， 比如图片预览，打开链接等功能
+        e.preventDefault();
+        if (dragTarget) {
+          dragTarget.parentNode.removeChild(dragTarget);
+          e.target.appendChild(dragTarget);
+          e.target.style.borderColor = '';
+        }
+      });
+    </script>
+  </body>
+</html>

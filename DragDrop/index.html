@@ -24,11 +24,7 @@
   </head>
   <body>
     <div class="dropzone">
-      <div
-        id="draggable"
-        draggable="true"
-        ondragstart="event.dataTransfer.setData('text/plain',null)"
-      >
+      <div id="draggable" draggable="true" ondragstart="onDragStart(event, 1)">
         This div is draggable
       </div>
     </div>
@@ -36,10 +32,24 @@
     <div class="dropzone"></div>
     <div class="dropzone"></div>
     <script>
+      
+
       var dragged;
 
+      function onDragStart(e, param) {
+        console.log(e, param);
+        event.dataTransfer.setData('text/plain', event.target.textContent);
+        event.dataTransfer.setData('test', 'test');
+      }
+
       /* 可拖动的目标元素会触发事件 */
-      document.addEventListener('drag', function (event) {}, false);
+      document.addEventListener(
+        'drag',
+        function (event) {
+          event.preventDefault();
+        },
+        false
+      );
 
       document.addEventListener(
         'dragstart',
@@ -98,6 +108,8 @@
         function (event) {
           // 阻止默认动作（如打开一些元素的链接）
           event.preventDefault();
+          console.log(event.dataTransfer.getData('text/plain'));
+          console.log(event.dataTransfer.getData('test'));
           // 移动拖动的元素到所选择的放置目标节点
           if (event.target.className == 'dropzone') {
             event.target.style.background = '';
