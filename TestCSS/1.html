@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nth</title>
+  </head>
+  <body>
+    <style>
+      /**/
+      .container .test:nth-child(3) {
+        background-color: yellow;
+      }
+      .container .test:nth-child(7) {
+        background-color: red;
+      }
+      .container .test:nth-of-type(2) {
+        background-color: green;
+      }
+      .container .test:nth-of-type(3) {
+        background-color: blue;
+      }
+    </style>
+    <div class="container">
+      <p class="test">1</p>
+      <p class="test">2</p>
+      <h4 class="test">3</h4>
+      <h4 class="test">4</h4>
+      <p class="test">5</p>
+      <p class="test">6</p>
+      <p>7</p>
+      <p>8</p>
+    </div>
+  </body>
+</html>

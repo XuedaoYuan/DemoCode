@@ -65,13 +65,61 @@
         e.stopPropagation();
         e.target.style.borderColor = '';
         const files = e.dataTransfer.files;
-        console.log(files);
-        for (let i = 0, len = files.length; i < len; i++) {
+        console.log(files, typeof files);
+        multipleUpload(files, res => {
+          console.log(res);
           const p = document.createElement('p');
-          p.textContent = files[i].name;
+          p.style.color = 'red';
+          p.textContent = res.name || res;
           document.body.appendChild(p);
-        }
+        }).then(result => {
+          for (let i = 0, len = result.length; i < len; i++) {
+            const p = document.createElement('p');
+            p.textContent = result[i].name || result[i];
+            document.body.appendChild(p);
+          }
+        });
       });
+
+      function uploadFile(file) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve(file.name || file);
+          }, 1000);
+        });
+      }
+
+      function multipleUpload(fileList, cb) {
+        return new Promise((resolve, reject) => {
+          const result = [];
+          const files = Array.prototype.slice.call(fileList);
+          upload();
+          async function upload() {
+            const file = files.shift();
+            try {
+              const res = await uploadFile(file);
+              result.push(res);
+              if (typeof cb === 'function') {
+                cb(res);
+              }
+              if (result.length === fileList.length) {
+                resolve(result);
+                return;
+              }
+              if (files.length > 0) {
+                upload();
+              }
+            } catch (error) {
+              reject(error);
+            }
+          }
+        });
+      }
+      /* multipleUpload([1, 2, 3, 4], res => {
+        console.log(res);
+      }).then(result => {
+        console.log(result);
+      }); */
     </script>
   </body>
 </html>

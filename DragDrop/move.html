@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>move</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .box {
+        width: 200px;
+        height: 100px;
+        background-color: #ccc;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        /* transform: translate(-50%, -50%); */
+        /* cursor: move;    */
+      }
+    </style>
+  </head>
+  <body>
+    <button onclick="handleMakeMoveable()">make Moveable</button>
+    <button onclick="makeUnmovable()">make Unmovable</button>
+    <div class="box"></div>
+    <script>
+      const box = document.querySelector('.box');
+
+      function makeMoveable(el) {
+        if (!el) return () => {};
+        el.onmousedown = e => {
+          el.style.cursor = 'move';
+          const disX = e.clientX - el.offsetLeft;
+          const disY = e.clientY - el.offsetTop;
+
+          document.onmousemove = moveEvent => {
+            console.log(moveEvent.clientX, moveEvent.clientY);
+            let left = moveEvent.clientX - disX;
+            if (left < 0) {
+              left = 0;
+            }
+            const rightBoundary = window.innerWidth - el.offsetWidth;
+            if (left > rightBoundary) {
+              left = rightBoundary;
+            }
+            let top = moveEvent.clientY - disY;
+            if (top < 0) {
+              top = 0;
+            }
+            const bottomBoundary = window.innerHeight - el.offsetHeight;
+            if (top > bottomBoundary) {
+              top = bottomBoundary;
+            }
+            el.style.left = left + 'px';
+            el.style.top = top + 'px';
+
+            if (
+              moveEvent.clientX <= 0 ||
+              moveEvent.clientY <= 0 ||
+              moveEvent.clientX >= window.innerWidth ||
+              moveEvent.clientY >= window.innerHeight
+            ) {
+              document.onmousemove = null;
+            }
+          };
+          document.onmouseup = upEvent => {
+            el.style.cursor = '';
+            document.onmousemove = null;
+            el.onmouseup = null;
+          };
+        };
+
+        return () => {
+          el.onmousedown = null;
+          document.onmousemove = null;
+          document.onmouseup = null;
+        };
+      }
+      let cancel = makeMoveable(box);
+
+      function handleMakeMoveable() {
+        cancel = makeMoveable(box);
+      }
+      function makeUnmovable() {
+        cancel();
+      }
+    </script>
+  </body>
+</html>
