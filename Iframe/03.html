@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const res = {};
+      res.data = [
+        {
+          user_id: '1',
+          fund_id: '1036,1037',
+          account_status: '1',
+          fund_count: 2
+        },
+        {
+          user_id: '1',
+          fund_id: '1036,1037',
+          account_status: '6',
+          fund_count: 3
+        },
+        {
+          user_id: '1',
+          fund_id: '1036,1037',
+          account_status: '7',
+          fund_count: 5
+        },
+        {
+          user_id: '1',
+          fund_id: '1036,1037',
+          account_status: '4',
+          fund_count: 2
+        },
+        {
+          user_id: '1',
+          fund_id: '1036,1037',
+          account_status: '5',
+          fund_count: 2
+        },
+        {
+          user_id: '1000',
+          fund_id: '1036,1037',
+          account_status: '1',
+          fund_count: 2
+        },
+        {
+          user_id: '1000',
+          fund_id: '1036,1037',
+          account_status: '6',
+          fund_count: 3
+        },
+        {
+          user_id: '1000',
+          fund_id: '1036,1037',
+          account_status: '7',
+          fund_count: 5
+        },
+        {
+          user_id: '1000',
+          fund_id: '1036,1037',
+          account_status: '3',
+          fund_count: 2
+        },
+        {
+          user_id: '1000',
+          fund_id: '1036,1037',
+          account_status: '4',
+          fund_count: 2
+        },
+        {
+          user_id: '1000',
+          fund_id: '1036,1037',
+          account_status: '2',
+          fund_count: 10
+        }
+      ];
+      const accountingMakingProcessList = [
+        /*  {
+          employeeName: '会计1',
+          done: 264,
+          error: 36,
+          ing: 60,
+          undo: 40,
+          total: 0
+        } */
+      ];
+      const userMap = {};
+      res.data.forEach(item => {
+        const user_id = item.user_id;
+        const account_status = item.account_status;
+        if (!userMap[user_id]) {
+          userMap[user_id] = [];
+        }
+        userMap[user_id].push(item);
+      });
+      for (let key of Object.keys(userMap)) {
+        const list = userMap[key];
+        const obj = {
+          user_id: key,
+          done: 0,
+          error: 0,
+          ing: 0,
+          undo: 0,
+          total: 0,
+          showToolTip: false
+        };
+        let total = 0;
+        list.forEach(item => {
+          switch (item.account_status) {
+            /* 1-未开始;6-异常;7-已完成(估值表已确认);8-进行中； */
+            case '1':
+            case 1:
+              total += item.fund_count;
+              obj.undo = item.fund_count;
+              break;
+            case '6':
+            case 6:
+              total += item.fund_count;
+              obj.error = item.fund_count;
+              break;
+            case '7':
+            case 7:
+              total += item.fund_count;
+              obj.done = item.fund_count;
+              break;
+            case '8':
+            case 8:
+              total += item.fund_count;
+              obj.ing = item.fund_count;
+              break;
+
+            default:
+              // 2 3 4 5加起来就是进行中  8也可能是进行中 就看后端怎么做了
+              total += item.fund_count;
+              obj.ing += item.fund_count;
+              break;
+          }
+        });
+        obj.total = total;
+        accountingMakingProcessList.push(obj);
+      }
+      console.log(userMap);
+      console.log(accountingMakingProcessList);
+      const arr = [{ x: 1 }, { x: 3 }, { x: 2 }];
+      console.log(arr.sort((a, b) => b.x - a.x));
+    </script>
+  </body>
+</html>

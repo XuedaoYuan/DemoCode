@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .box {
+        width: 0;
+        height: 0;
+        border: 40px solid;
+        border-color: green green green red;
+        position: absolute;
+        left: 200px;
+        top: 200px;
+        transform-origin: 20px center;
+        transition: all 0.5s;
+      }
+      .box:hover {
+        transform: rotate(90deg);
+      }
+
+      .parent {
+        width: 500px;
+        height: 500px;
+        background-color: lightgreen;
+      }
+      .child {
+        width: 200px;
+        height: 200px;
+        background-color: lightblue;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <div class="box"></div> -->
+
+    <div class="parent">
+      <div class="child"></div>
+    </div>
+    <script>
+      /* const span = document.createElement('span');
+      span.textContent = '阿斯达as';
+      span.style.fontSize = '14px';
+      span.style.letterSpacing = '0';
+      span.style.visibility = 'hidden';
+      document.body.appendChild(span);
+      console.log(span.offsetWidth); */
+      const parent = document.querySelector('.parent');
+      const child = document.querySelector('.child');
+      parent.addEventListener(
+        'mouseout',
+        e => {
+          e.stopPropagation();
+          console.log('parent mousoeut');
+        },
+        false
+      );
+      child.addEventListener(
+        'mouseout',
+        () => {
+          console.log('child mousoeut');
+        },
+        false
+      );
+
+      parent.addEventListener(
+        'click',
+        () => {
+          console.log('parent click');
+        },
+        true
+      );
+      child.addEventListener(
+        'click',
+        () => {
+          console.log('child click');
+        },
+        true
+      );
+      sessionStorage.setItem('a', '111');
+    </script>
+  </body>
+</html>

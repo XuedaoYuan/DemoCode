@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .container {
+        width: 200px;
+        height: 200px;
+        background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container"></div>
+    <script>
+      const container = document.querySelector('.container');
+      container.onmousewheel = function (event) {
+        event = event || window.event;
+        let wheelDirection = '';
+        if (event.wheelDelta > 0 || event.detail < 0) {
+          wheelDirection = 'top';
+        } else {
+          wheelDirection = 'bottom';
+        }
+        let h = container.clientHeight + (wheelDirection === 'top' ? -10 : 10);
+        if (h < 200) {
+          h = 200;
+        }
+        container.style.height = h + 'px';
+
+        return false;
+      };
+      bindEvent(container, 'mousewheel', container.onmousewheel);
+      function bindEvent(context, eventName, callback) {
+        if (context.addEventListener) {
+          context.addEventListener(eventName, callback, false);
+        } else {
+          context.attachEvent('on' + eventName, function () {
+            callback.call(context);
+          });
+        }
+      }
+    </script>
+  </body>
+</html>

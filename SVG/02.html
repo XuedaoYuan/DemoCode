@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .red {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="200" height="200">
+      <circle id="mycircle" cx="50" cy="50" r="50" />
+    </svg>
+    <div style="width: 50%">
+      <svg viewBox="0 0 100 100">
+        <circle id="mycircle" cx="50" cy="50" r="50" />
+      </svg>
+    </div>
+    <style>
+      .red {
+        fill: red;
+      }
+      .fancy {
+        fill: none;
+        stroke: black;
+        stroke-width: 10px;
+      }
+    </style>
+    <svg width="300" height="180">
+      <circle cx="30" cy="50" r="25" />
+      <circle cx="90" cy="50" r="25" class="red" />
+      <circle cx="150" cy="50" r="25" class="fancy" />
+    </svg>
+    <svg viewBox="0 0 200 100">
+      <style>
+        .line {
+          stroke: black;
+          stroke-width: 2px;
+        }
+      </style>
+      <line x1="100" y1="0" x2="200" y2="50" class="line"></line>
+      <line x1="200" y1="50" x2="100" y2="100" class="line"></line>
+      <line x1="100" y1="100" x2="0" y2="50" class="line"></line>
+      <line x1="0" y1="50" x2="100" y2="0" class="line"></line>
+    </svg>
+    <svg width="300" height="180">
+      <polyline points="3,3 30,28 3,53" fill="none" stroke="black" />
+    </svg>
+  </body>
+</html>

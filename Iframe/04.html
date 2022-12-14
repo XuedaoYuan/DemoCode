@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const result = [
+        { children: [], x: 1 },
+        {
+          children: [
+            {
+              x: 21,
+              children: []
+            },
+            {
+              x: 21,
+              children: [{}]
+            },
+            {
+              x: 21,
+              children: []
+            }
+          ],
+          x: 2
+        },
+        {
+          children: [],
+          x: 3
+        }
+      ];
+      const len = result.length;
+      for (let i = len - 1; i >= 0; i--) {
+        if (!result[i].children || result[i].children.length === 0) {
+          result.splice(i, 1);
+        } else if (result[i].children && result[i].children.length > 0) {
+          const len2 = result[i].children.length;
+          for (let j = len2 - 1; j >= 0; j--) {
+            if (!result[i].children[j].children || result[i].children[j].children.length === 0) {
+              result[i].children.splice(j, 1);
+            }
+          }
+        }
+      }
+      console.log(result);
+    </script>
+  </body>
+</html>
