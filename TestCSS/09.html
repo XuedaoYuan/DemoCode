@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      .container {
+        line-height: 100px;
+        background-color: #eee;
+        font-size: 20px;
+        position: relative;
+      }
+      .container::before {
+        position: absolute;
+        content: ' ';
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: green;
+        transform: scaleY(0.2);
+        top: 51px;
+      }
+      .container::after {
+        position: absolute;
+        content: ' ';
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: red;
+        top: 57px;
+        transform: scaleY(0.2);
+      }
+      .container span {
+        vertical-align: baseline;
+        background-color: #ddd;
+      }
+    </style>
+    <div class="container">
+      <span>你好xxx世界</span>
+      <img src="./1.png" alt="" width="20" />
+      <span>xxx hjg</span>
+    </div>
+  </body>
+</html>

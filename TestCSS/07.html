@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./layout.css" />
+  </head>
+  <body>
+    <style>
+      body {
+        padding-left: 40px;
+      }
+      .container {
+        width: 300px;
+        border: 10px solid #ccc;
+        display: flex;
+      }
+      .item {
+        flex: 1 1 auto;
+        background-color: greenyellow;
+        text-align: center;
+      }
+      .item:nth-child(2) {
+        background-color: blue;
+      }
+    </style>
+    <h4>flex-basis: 0%</h4>
+    <div class="container">
+      <div class="item" id="item1" style="flex-basis: 0%">item-1tem-1</div>
+      <div class="item">item-2</div>
+      <div class="item">item-3</div>
+    </div>
+    <h4>flex-basis: auto</h4>
+    <div class="container">
+      <div class="item" id="item1" style="flex-basis: auto">item-1</div>
+      <div class="item">item-2</div>
+      <div class="item">item-3</div>
+    </div>
+    <h4>flex-basis: 150px;</h4>
+    <div class="container">
+      <div class="item" id="item1" style="flex-basis: 150px">item-1</div>
+      <div class="item">item-2</div>
+      <div class="item">item-3</div>
+    </div>
+  </body>
+</html>
