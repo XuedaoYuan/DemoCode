@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>瀑布流布局</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+      .water-fall__wrapper {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+      }
+      .water-fall__container {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      .water-fall__item {
+        flex: 1;
+        padding: 0 4px;
+      }
+      .item {
+        background-color: #ccc;
+        margin-bottom: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 这里仅以4列为例 -->
+    <div class="water-fall__wrapper">
+      <div class="water-fall__container">
+        <div class="water-fall__item" data-index="0"></div>
+        <div class="water-fall__item" data-index="1"></div>
+        <div class="water-fall__item" data-index="2"></div>
+        <div class="water-fall__item" data-index="3"></div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      const waterFallItemList = document.querySelectorAll('.water-fall__item');
+
+      // 获取高度最小的列
+      function getMinHeightColumn() {
+        let minH = waterFallItemList[0].offsetHeight;
+        let minColumn = waterFallItemList[0];
+        for (let i = 1, len = waterFallItemList.length; i < len; i++) {
+          const height = waterFallItemList[i].offsetHeight;
+          if (height < minH) {
+            minH = height;
+            minColumn = waterFallItemList[i];
+          }
+        }
+        return minColumn;
+      }
+
+      let index = 1;
+      //   创建一个内容样例
+      function createItem() {
+        const h = Math.floor(Math.random() * 200 + 100);
+        const div = document.createElement('div');
+        div.classList.add('item');
+        div.style.height = h + 'px';
+        div.textContent = index;
+        index++;
+        return div;
+      }
+      for (let i = 0, len = 2; i < len; i++) {
+        getMinHeightColumn().appendChild(createItem());
+      }
+
+      const waterFallWrapper = document.querySelector('.water-fall__wrapper');
+      let fetching = false;
+      waterFallWrapper.addEventListener('scroll', () => {
+        if (finished) return;
+        const threshold =
+          waterFallWrapper.scrollHeight -
+          waterFallWrapper.scrollTop -
+          waterFallWrapper.offsetHeight;
+        console.log(threshold);
+        if (threshold <= 100) {
+          if (fetching) return;
+          loadingMore();
+        }
+      });
+
+      let finished = false;
+      // 初始高度不足时， 自动加载更多. 没有更多是， 表示结束
+      function loadImmediate() {
+        if (finished) return;
+        if (waterFallWrapper.scrollHeight <= waterFallWrapper.offsetHeight) {
+          loadingMore(() => {
+            loadImmediate();
+          });
+        }
+      }
+      loadImmediate();
+      function loadingMore(callback) {
+        // 模拟一下异步接口
+        fetching = true;
+        setTimeout(() => {
+          if (index >= 100) {
+            // 模拟结束
+            finished = true;
+            const div = document.createElement('div');
+            div.textContent = 'finish';
+            waterFallWrapper.appendChild(div);
+            return;
+          }
+          for (let i = 0, len = 10; i < len; i++) {
+            getMinHeightColumn().appendChild(createItem());
+          }
+
+          setTimeout(() => {
+            fetching = false;
+            if (typeof callback === 'function') {
+              callback();
+            }
+          });
+        }, 200);
+      }
+    </script>
+  </body>
+</html>
