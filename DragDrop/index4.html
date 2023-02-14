@@ -62,7 +62,9 @@
         <div class="draggable-box" data-type="dragBox" draggable="true">10</div>
       </div>
       <div class="dropzone-container">
-        <div class="dropzone" data-type="dragZone"></div>
+        <div class="dropzone" data-type="dragZone">
+          <div>asdasdasdas</div>
+        </div>
         <div class="dropzone" data-type="dragZone"></div>
         <div class="dropzone" data-type="dragZone"></div>
       </div>
@@ -108,6 +110,7 @@
       container.addEventListener('drop', e => {
         // 阻止一些默认事件， 比如图片预览，打开链接等功能
         e.preventDefault();
+        console.log(e.target);
         if (dragTarget) {
           dragTarget.parentNode.removeChild(dragTarget);
           e.target.appendChild(dragTarget);

@@ -89,22 +89,6 @@
 .bg-white {
   background-color: #fff;
 }
-.bg-aaa {
-  background-color: #aaa;
-}
-.bg-bbb {
-  background-color: #bbb;
-}
-.bg-ccc {
-  background-color: #ccc;
-}
-.bg-red {
-  background-color: red;
-}
-
-.bg-green {
-  background-color: green;
-}
 
 .mb-2 {
   margin-bottom: 2px;
@@ -415,8 +399,4 @@
 }
 .xd-hairline--surround:after {
   border-width: 1px;
-}
-
-.border-1-ccc {
-  border: 1px solid #ccc;
 }
