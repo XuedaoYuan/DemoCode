@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      body {
+        padding: 50px;
+      }
+      p {
+        font-size: 14px;
+        line-height: 18px;
+        width: 500px;
+      }
+      strong {
+        padding: 20px;
+        margin: 20px;
+        border: 5px solid red;
+      }
+    </style>
+    <p>
+      盒模型不完全适用于参与
+      <strong>内联格式上下文</strong>。
+      在水平书写模式行中，水平填充、边框和边距将应用于元素，并左右移动文本。
+      但是，元素上方和下方边距将不适用。应用垂直填充和边框可能会在内容的上方和下方重叠，因为在内联格式上下文中，填充和边框不会将行框撑开。
+    </p>
+  </body>
+</html>
