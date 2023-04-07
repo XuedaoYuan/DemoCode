@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      div p.box:first-child {
+        color: red;
+      }
+    </style>
+    <div>
+      <p class="box2">11</p>
+      <p class="box">22</p>
+      <p class="box">33</p>
+    </div>
+
+    <style>
+      div p:only-child {
+        color: red;
+      }
+    </style>
+    <div>
+      <p>000</p>
+    </div>
+    <div>
+      <p>111</p>
+      <p>222</p>
+    </div>
+  </body>
+</html>

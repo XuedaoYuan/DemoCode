@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      a[href] {
+        color: red;
+      }
+      /* 元素a的href属性等于xdyuan.cn时匹配 */
+      a[href='xdyuan.cn'] {
+        color: green;
+      }
+      /* 元素a的class属性存在一个名为blog的类名时匹配 */
+      a[class~='blog'] {
+        color: blue;
+      }
+      div[lang|='zh'] {
+        color: yellow;
+      }
+    </style>
+    <a href="xdyuan.cn" title="blog">xdyuan blog</a>
+    <a href="google.com">google</a>
+    <a href="" class="blogtest">my blog</a>
+    <a href="" class="test">test blog</a>
+    <div lang="zh-cn">zh-cn</div>
+    <div lang="zh">zh</div>
+    <div lang="en">en</div>
+  </body>
+</html>
