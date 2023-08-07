@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      console.log(String(undefined)); // 'undefined'
+      console.log(String(null)); // 'null'
+
+      console.log(String(false)); // 'false'
+      console.log(String(true)); // 'true'
+
+      console.log(String(0)); // '0'
+      console.log(String(-0)); // '0'
+      console.log(String(NaN)); // 'NaN'
+      console.log(String(Infinity)); // 'Infinity'
+      console.log(String(-Infinity)); // '-Infinity'
+
+      const str1 = String(1);
+      console.log(str1, typeof str1); // '1' string
+      console.log(str1 === '1'); // true
+      console.log(str1 === 1); // false
+
+      const arr = [1];
+      console.log(arr.valueOf() === arr); // true
+
+      console.log(new Date(2023, 7 - 1, 31).valueOf()); // 1690732800000
+
+      console.log({}.toPrimitive());
+    </script>
+  </body>
+</html>

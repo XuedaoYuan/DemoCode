@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const result = [
+        { report_code: '1', file_namerule: '1,2' },
+        { report_code: '2', file_namerule: '2' },
+        { report_code: '1', file_namerule: '1,3,2' },
+        { report_code: '3', file_namerule: '2' },
+        { report_code: '2', file_namerule: '4,2' },
+        { report_code: '5', file_namerule: '' },
+        { report_code: '5', file_namerule: '' }
+      ];
+      const fileFormatValueLabelMap = {
+        1: '1',
+        2: '2',
+        3: '3',
+        4: '4'
+      };
+      validateReportAndFileNameruleUnique(result);
+      function validateReportAndFileNameruleUnique(result) {
+        const reportCodeMap = new Map();
+
+        const validResult = [];
+        const bridgeKey = '===';
+        for (let i = 0, len = result.length; i < len; i++) {
+          const row = result[i];
+          // file_namerule 是已经排序过的数字
+          const { report_code, file_namerule = '' } = row;
+          const fileNameruleList = file_namerule.split(',').filter(_ => _);
+
+          if (fileNameruleList.length > 0) {
+            fileNameruleList.forEach(fileFormat => {
+              // 拼接一下作为唯一的key
+              const key = `${report_code}${bridgeKey}${fileFormat}`;
+              if (reportCodeMap.has(key)) {
+                validResult.push(key);
+              } else {
+                reportCodeMap.set(key, true);
+              }
+            });
+          } else {
+            // 有些报表可以不选择文件格式
+            const key = report_code;
+            if (reportCodeMap.has(key)) {
+              validResult.push(key);
+            } else {
+              reportCodeMap.set(key, true);
+            }
+          }
+        }
+        reportCodeMap.clear();
+
+        if (validResult.length > 0) {
+          // fileFormatValueLabelMap
+          const msgList = [];
+          validResult.forEach(key => {
+            const [report_code, fileFormat = ''] = key.split(bridgeKey);
+            const reportName = getReportNameByCode(report_code);
+            if (fileFormat) {
+              const fileFormatLabel = fileFormatValueLabelMap[fileFormat];
+              const msg = `请勿重复选择报表：[${reportName}]、[${fileFormatLabel}]格式`;
+              msgList.push(msg);
+            } else {
+              // 不存在文件格式， 只提示报表
+              const msg = `请勿重复选择报表：[${reportName}]`;
+              msgList.push(msg);
+            }
+          });
+          //   this.showMsgInfo(msgList.join('\n'));
+          console.log(msgList.join('\n'));
+          return false;
+        }
+        return true;
+      }
+      function getReportNameByCode(a) {
+        return a;
+      }
+    </script>
+  </body>
+</html>

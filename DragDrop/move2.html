@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>move</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        position: relative;
+      }
+      .box {
+        box-sizing: border-box;
+        width: 200px;
+        height: 100px;
+        min-width: 200px;
+        min-height: 100px;
+        background-color: #ccc;
+        position: absolute;
+        left: 300px;
+        top: 200px;
+        /* border: 1px solid red; */
+        /* transform: translate(-50%, -50%); */
+        /* cursor: move;    */
+      }
+      .right-bar {
+        position: absolute;
+        top: 30px;
+        bottom: 10px;
+        right: 0px;
+        width: 2px;
+        background-color: lightseagreen;
+      }
+      .right-bar:hover {
+        cursor: col-resize;
+      }
+      .left-bar {
+        position: absolute;
+        top: 30px;
+        bottom: 0;
+        left: 0px;
+        width: 2px;
+        background-color: lightseagreen;
+      }
+      .left-bar:hover {
+        cursor: col-resize;
+      }
+      .bottom-bar {
+        position: absolute;
+        left: 0;
+        bottom: 0px;
+        right: 10px;
+        height: 2px;
+        background-color: lightseagreen;
+      }
+      .bottom-bar:hover {
+        cursor: row-resize;
+      }
+      .nwse-bar {
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        height: 10px;
+        width: 10px;
+        background-color: lightseagreen;
+      }
+      .nwse-bar:hover {
+        cursor: nwse-resize;
+      }
+      .x-dialog-mask {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .x-dialog-header {
+        height: 30px;
+        background-color: lightseagreen;
+        cursor: move;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="x-dialog-mask"></div>
+    <div class="x-dialog-wrapper box">
+      <div class="x-dialog-header">title</div>
+      <div class="x-dialog-body"></div>
+      <div class="x-dialog-footer"></div>
+      <div class="left-bar"></div>
+      <div class="right-bar"></div>
+      <div class="bottom-bar"></div>
+      <div class="nwse-bar"></div>
+    </div>
+    <script>
+      const box = document.querySelector('.box');
+      const rightBar = document.querySelector('.right-bar');
+      const leftBar = document.querySelector('.left-bar');
+      const bottomBar = document.querySelector('.bottom-bar');
+      const nwseBar = document.querySelector('.nwse-bar');
+      const dialogMask = document.querySelector('.x-dialog-mask');
+      const dialogHeader = document.querySelector('.x-dialog-header');
+
+      const zIndex = 2000;
+
+      leftBar.onmousedown = e => {
+        const initialX = e.clientX;
+        const initOffsetLeft = box.offsetLeft;
+        const initialWidth = box.offsetWidth;
+        document.onmousemove = moveEvent => {
+          const deltaWidth = moveEvent.clientX - initialX;
+          box.style.left = initOffsetLeft + deltaWidth + 'px';
+          box.style.width = initialWidth - deltaWidth + 'px';
+        };
+        document.onmouseup = upEvent => {
+          document.onmousemove = null;
+          document.onmouseup = null;
+        };
+      };
+      rightBar.onmousedown = e => {
+        const initialX = e.clientX;
+        const initialWidth = box.offsetWidth;
+        document.onmousemove = moveEvent => {
+          const deltaWidth = moveEvent.clientX - initialX;
+          box.style.width = initialWidth + deltaWidth + 'px';
+        };
+        document.onmouseup = upEvent => {
+          document.onmousemove = null;
+          document.onmouseup = null;
+        };
+      };
+      bottomBar.onmousedown = e => {
+        const initialY = e.clientY;
+        const initialHeight = box.offsetHeight;
+        document.onmousemove = moveEvent => {
+          const deltaH = moveEvent.clientY - initialY;
+          box.style.height = initialHeight + deltaH + 'px';
+        };
+        document.onmouseup = upEvent => {
+          document.onmousemove = null;
+          document.onmouseup = null;
+        };
+      };
+
+      nwseBar.onmousedown = e => {
+        e.stopPropagation();
+        e.preventDefault();
+        const initialY = e.clientY;
+        const initialHeight = box.offsetHeight;
+        const initialX = e.clientX;
+        const initialWidth = box.offsetWidth;
+        document.onmousemove = moveEvent => {
+          moveEvent.stopPropagation();
+          moveEvent.preventDefault();
+          const deltaH = moveEvent.clientY - initialY;
+          box.style.height = initialHeight + deltaH + 'px';
+          const deltaWidth = moveEvent.clientX - initialX;
+          box.style.width = initialWidth + deltaWidth + 'px';
+        };
+        document.onmouseup = upEvent => {
+          document.onmousemove = null;
+          document.onmouseup = null;
+        };
+      };
+
+      function makeMoveable(el) {
+        if (!el) return () => {};
+        el.onmousedown = e => {
+          e.stopPropagation();
+          e.preventDefault();
+          el.style.cursor = 'move';
+          const disX = e.clientX - box.offsetLeft;
+          const disY = e.clientY - box.offsetTop;
+
+          document.onmousemove = moveEvent => {
+            moveEvent.stopPropagation();
+            moveEvent.preventDefault();
+            console.log(moveEvent.clientX, moveEvent.clientY);
+            let left = moveEvent.clientX - disX;
+            if (left < 0) {
+              left = 0;
+            }
+            const rightBoundary = window.innerWidth - box.offsetWidth;
+            if (left > rightBoundary) {
+              left = rightBoundary;
+            }
+            let top = moveEvent.clientY - disY;
+            if (top < 0) {
+              top = 0;
+            }
+            const bottomBoundary = window.innerHeight - box.offsetHeight;
+            if (top > bottomBoundary) {
+              top = bottomBoundary;
+            }
+            box.style.left = left + 'px';
+            box.style.top = top + 'px';
+
+            if (
+              moveEvent.clientX <= 0 ||
+              moveEvent.clientY <= 0 ||
+              moveEvent.clientX >= window.innerWidth ||
+              moveEvent.clientY >= window.innerHeight
+            ) {
+              document.onmousemove = null;
+            }
+          };
+          document.onmouseup = upEvent => {
+            el.style.cursor = '';
+            document.onmousemove = null;
+            document.onmouseup = null;
+          };
+        };
+
+        return () => {
+          el.onmousedown = null;
+          document.onmousemove = null;
+          document.onmouseup = null;
+        };
+      }
+      //   let cancel = makeMoveable(box);
+      makeMoveable(dialogHeader);
+      /*  function handleMakeMoveable() {
+        cancel = makeMoveable(box);
+      }
+      function makeUnmovable() {
+        cancel();
+      } */
+    </script>
+  </body>
+</html>

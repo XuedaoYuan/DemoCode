@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      function loadScript(src, done) {
+        var js = document.createElement('script');
+        js.src = src;
+        js.onload = function () {
+          done();
+        };
+        js.onerror = function () {
+          done(new Error('Failed to load script ' + src));
+        };
+        document.head.appendChild(js);
+      }
+      console.log('loader');
+      loadScript('./04.js', () => {
+        console.log('done');
+      });
+    </script>
+  </head>
+  <body>
+    <!-- <script defer src="./load.js"></script> -->
+    <script defer src="./05.js"></script>
+  </body>
+</html>

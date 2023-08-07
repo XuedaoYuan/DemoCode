@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      .container {
+        height: 400px;
+        width: 300px;
+        border: 1px solid red;
+        overflow-y: auto;
+      }
+      .content {
+        height: 800px;
+      }
+      .box {
+        width: 100px;
+        height: 50px;
+        background-color: #ccc;
+        margin-top: 500px;
+      }
+    </style>
+    <div class="container">
+      <div class="content">
+        <div class="box"></div>
+      </div>
+    </div>
+    <div>
+      <label>
+        <span>block:</span>
+        <select name="" id="blockSelect">
+          <option value="start">start</option>
+          <option value="center">center</option>
+          <option value="end">end</option>
+          <option value="nearest">nearest</option>
+        </select>
+      </label>
+      <label>
+        <span>inline:</span>
+        <select name="" id="inlineSelect">
+          <option value="start">start</option>
+          <option value="center">center</option>
+          <option value="end">end</option>
+          <option value="nearest">nearest</option>
+        </select>
+      </label>
+      <button id="scrollIntoViewBtn">scrollIntoView</button>
+    </div>
+    <script>
+      const box = document.querySelector('.box');
+      const scrollIntoViewBtn = document.querySelector('#scrollIntoViewBtn');
+      const blockSelect = document.querySelector('#blockSelect');
+      const inlineSelect = document.querySelector('#inlineSelect');
+      scrollIntoViewBtn.addEventListener('click', function () {
+        box.scrollIntoView({
+          behavior: 'smooth',
+          block: blockSelect.value,
+          inline: inlineSelect.value
+        });
+      });
+    </script>
+  </body>
+</html>

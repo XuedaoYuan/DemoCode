@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>利用定位和mouse事件实现顺序问题</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      .container {
+        margin: 100px;
+        border: 1px solid #eee;
+        width: 500px;
+        list-style: none;
+        position: relative;
+      }
+
+      .list-item {
+        height: 40px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        line-height: 39px;
+        position: relative;
+        width: 100%;
+        left: 0;
+        top: 0;
+      }
+      .move-item {
+        width: 60px;
+        height: 100%;
+        top: 0;
+        right: 0;
+        position: absolute;
+        text-align: center;
+        background-color: #ccc;
+        cursor: move;
+      }
+    </style>
+  </head>
+  <body>
+    <ul class="container">
+      <!-- <li></li> -->
+    </ul>
+    <script>
+      let list = [{ name: 1 }, { name: 2 }, { name: 3 }, { name: 4 }, { name: 5 }, { name: 6 }];
+      const container = document.querySelector('.container');
+      const itemHeight = 40;
+      const itemMargin = 0;
+      let liElList = [];
+
+      initList(list);
+
+      function initList(list) {
+        clearChild(container);
+        liElList = [];
+        const fragment = document.createDocumentFragment();
+        container.style.height = list.length * (itemHeight + itemMargin) + 'px';
+        list.forEach((item, index) => {
+          if (item) {
+            const li = document.createElement('li');
+            li.textContent = JSON.stringify(item);
+            li.setAttribute('data-index', index);
+            li.classList.add('list-item');
+            //   li.style.top = index * (itemHeight + itemMargin) + 'px';
+            const div = document.createElement('div');
+            div.classList.add('move-item');
+            div.textContent = '=';
+            makeMoveable(div);
+            li.appendChild(div);
+            liElList.push(li);
+            fragment.appendChild(li);
+          }
+        });
+        container.appendChild(fragment);
+      }
+      function clearChild(el) {
+        while (el.firstChild) {
+          el.firstChild.remove();
+        }
+      }
+      function makeMoveable(el) {
+        if (!el) return () => {};
+        el.onmousedown = e => {
+          el.style.cursor = 'move';
+          el.parentNode.style.position = 'absolute';
+
+          const index = el.parentNode.dataset.index - 0;
+          el.parentNode.style.top = itemHeight * index + 'px';
+          //   const disX = e.clientX - el.offsetLeft;
+          console.log(e.clientY, el.parentNode.offsetTop);
+          const disY = e.clientY - el.parentNode.offsetTop;
+
+          let target = null;
+          let appendToFirst = false;
+          let currentNode = null;
+
+          document.onmousemove = moveEvent => {
+            // el.parentNode.style.position = 'absolute'
+
+            let top = moveEvent.clientY - disY;
+
+            el.parentNode.style.left = '0px';
+            el.parentNode.style.top = top + 'px';
+
+            /* if (
+              moveEvent.clientX <= 0 ||
+              moveEvent.clientY <= 0 ||
+              moveEvent.clientX >= window.innerWidth ||
+              moveEvent.clientY >= window.innerHeight
+            ) {
+              document.onmousemove = null;
+            } */
+          };
+          document.onmouseup = upEvent => {
+            const obj = checkPosition(el.parentNode);
+            target = obj.target;
+            appendToFirst = obj.appendToFirst;
+            currentNode = obj.currentNode;
+            el.style.cursor = '';
+
+            el.onmouseup = null;
+
+            if (target && currentNode) {
+              if (appendToFirst) {
+                const targetIndex = target.dataset.index - 0;
+                const currentNodeIndex = currentNode.dataset.index - 0;
+                console.log(targetIndex, currentNodeIndex);
+                const currentItem = list[currentNodeIndex];
+                list[currentNodeIndex] = null;
+                list.unshift(currentItem);
+              } else {
+                console.log(target, currentNode);
+                const targetIndex = target.dataset.index - 0;
+                const currentNodeIndex = currentNode.dataset.index - 0;
+                console.log(targetIndex, currentNodeIndex);
+                const currentItem = list[currentNodeIndex];
+                list[currentNodeIndex] = null;
+                console.log('list = ', list);
+                list.splice(targetIndex + 1, 0, currentItem);
+                console.log('list = ', list);
+              }
+              list = list.filter(_ => _);
+              initList(list);
+            }
+
+            el.parentNode.style.position = 'relative';
+            el.parentNode.style.top = '0px';
+
+            document.onmousemove = null;
+            document.onmouseup = null;
+          };
+        };
+
+        return () => {
+          el.onmousedown = null;
+          document.onmousemove = null;
+          document.onmouseup = null;
+        };
+      }
+
+      function checkPosition(currentNode) {
+        let target = null;
+        let appendToFirst = false;
+        for (let i = 0, len = liElList.length; i < len; i++) {
+          const node = liElList[i];
+          if (node === currentNode) {
+            continue;
+          }
+          //   console.log(node.offsetTop, currentNode.offsetTop);
+          if (currentNode.offsetTop <= 0) {
+            target = liElList[0];
+            appendToFirst = true;
+          } else if (node.offsetTop <= currentNode.offsetTop) {
+            target = node;
+            appendToFirst = false;
+          }
+        }
+        // console.log(target, 'target');
+        return { target, appendToFirst, currentNode };
+      }
+    </script>
+  </body>
+</html>

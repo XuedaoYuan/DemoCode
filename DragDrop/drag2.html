@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>通过拖拽实现列表顺序变化</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      .container {
+        width: 500px;
+        border: 1px solid #ccc;
+        padding: 8px;
+        margin: 100px 0 0 50px;
+        list-style: none;
+      }
+      .container li {
+        height: 41px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        line-height: 40px;
+        margin-bottom: 4px;
+        transition: all 0.1s linear;
+      }
+    </style>
+  </head>
+  <body>
+    <ul class="container">
+      <!-- <li></li> -->
+    </ul>
+    <button id="add">append</button>
+    <h4>list 结果</h4>
+    <p id="list"></p>
+    <script>
+      let list = [{ item: 1 }, { item: 2 }, { item: 3 }, { item: 4 }, { item: 5 }, { item: 6 }];
+      let liList = [];
+      let appendToFirst = false;
+      let appendToLast = false;
+      let insertBeforeReferenceNode = null;
+
+      const container = document.querySelector('.container');
+      const listResultEl = document.querySelector('#list');
+      initList(list);
+
+      let dragTarget = null;
+      container.addEventListener('dragstart', e => {
+        const target = findDraggableParent(e.target);
+        if (target) {
+          dragTarget = target;
+        }
+      });
+      container.addEventListener('dragend', e => {
+        dragEndHandler(e);
+      });
+      container.addEventListener('dragover', e => {
+        e.preventDefault();
+        overHandler(e);
+      });
+      container.addEventListener('dragenter', e => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      container.addEventListener('dragleave', e => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      container.addEventListener('drop', e => {});
+
+      let timer = null;
+      function overHandler(e) {
+        // 判断应该放入那里
+        // 判断鼠标最终的落点， 是在各个子元素的哪个位置
+        /*
+            主要是是三个位置
+            1、顶部
+            2、中间
+            3、底部
+            */
+        for (let i = 0, len = liList.length; i < len; i++) {
+          const liEl = liList[i];
+          const { top, height } = liEl.getBoundingClientRect();
+          const clientY = e.clientY;
+          if (i === 0) {
+            // console.log(clientY, top + height / 2);
+            if (clientY <= top + height / 2) {
+              // 说明需要插入到最上面
+              console.log('top');
+              appendToFirst = true;
+              appendToLast = false;
+              setActiveElStyle(liEl);
+              insertBeforeReferenceNode = liEl;
+              break;
+            }
+          }
+          if (i === len - 1) {
+            if (clientY > top + height / 2) {
+              // 说明需要插入到底部
+              // dragTarget.remove();
+              // container.appendChild(dragTarget);
+              appendToFirst = false;
+              appendToLast = true;
+              setActiveElStyle(liEl);
+              insertBeforeReferenceNode = null;
+              break;
+            }
+          }
+
+          const nextLiEl = liList[i + 1];
+          if (liEl && nextLiEl) {
+            const { top: nextTop, height: nextHeight } = nextLiEl.getBoundingClientRect();
+            const middleLine = top + height / 2;
+            const nextMiddleLine = nextTop + nextHeight / 2;
+            if (middleLine < clientY && clientY <= nextMiddleLine) {
+              // 说明在这两个元素中间
+              // dragTarget.remove();
+              // container.insertBefore(dragTarget, nextLiEl);
+              appendToFirst = false;
+              appendToLast = false;
+              insertBeforeReferenceNode = nextLiEl;
+              setActiveElStyle(liEl);
+            }
+          }
+        }
+      }
+
+      function dragEndHandler(e) {
+        // 阻止一些默认事件， 比如图片预览，打开链接等功能
+        e.preventDefault();
+
+        setTimeout(() => {
+          /* dragTarget 表示当前拖动的是哪个元素 */
+          const target = e.target; // 表示当前放置的元素
+          if (!target) return;
+          /* if (target === dragTarget) {
+          return;
+        } */
+
+          console.log('dragTarget', dragTarget);
+          console.log('insertBeforeReferenceNode', insertBeforeReferenceNode);
+          if (dragTarget === insertBeforeReferenceNode) {
+            resetActiveElStyle();
+            return;
+          }
+          if (appendToLast) {
+            dragTarget.remove();
+            container.appendChild(dragTarget);
+          } else {
+            dragTarget.remove();
+            container.insertBefore(dragTarget, insertBeforeReferenceNode);
+          }
+
+          liList = container.querySelectorAll('li.drag-item');
+
+          getNewList();
+          resetActiveElStyle();
+        });
+      }
+
+      function initList(list) {
+        clearChild(container);
+        const fragment = document.createDocumentFragment();
+        list.forEach((item, index) => {
+          const li = document.createElement('li');
+          li.textContent = JSON.stringify(item);
+          li.setAttribute('draggable', 'true');
+          li.setAttribute('data-index', index);
+          li.classList.add('drag-item');
+          fragment.appendChild(li);
+        });
+        container.appendChild(fragment);
+        liList = container.querySelectorAll('li.drag-item');
+      }
+      function clearChild(el) {
+        while (el.firstChild) {
+          el.firstChild.remove();
+        }
+      }
+
+      function findDraggableParent(
+        el,
+        predicate = el => {
+          try {
+            return el.getAttribute('draggable') === 'true';
+          } catch (error) {
+            return false;
+          }
+        }
+      ) {
+        if (!el) return null;
+        let target = el;
+        while (target) {
+          if (predicate(target)) {
+            break;
+          } else {
+            target = target.parentNode;
+          }
+        }
+        return target;
+      }
+
+      function getNewList() {
+        const result = [];
+        for (let i = 0, len = liList.length; i < len; i++) {
+          const index = liList[i].dataset.index - 0;
+          result.push(list[index]);
+        }
+        listResultEl.textContent = result.map(_ => _.item).join(',');
+        return result;
+      }
+
+      function setActiveElStyle(el) {
+        resetActiveElStyle();
+        if (appendToFirst) {
+          el.style.marginTop = '40px';
+        } else {
+          el.style.marginBottom = '40px';
+        }
+      }
+      function resetActiveElStyle() {
+        for (let i = 0, len = liList.length; i < len; i++) {
+          const el = liList[i];
+          el.style.borderColor = '#ccc';
+          el.style.borderTopColor = '#ccc';
+          el.style.borderBottomColor = '#ccc';
+          el.style.marginBottom = '4px';
+          el.style.marginTop = '0';
+        }
+      }
+
+      const add = document.querySelector('#add');
+      add.addEventListener('click', () => {
+        list.push({ item: list.length + 1 });
+        initList(list);
+
+        list = getNewList();
+      });
+    </script>
+  </body>
+</html>

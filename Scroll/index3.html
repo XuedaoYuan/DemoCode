@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>scroll</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      header,
+      footer {
+        height: 100px;
+        background-color: #666;
+      }
+      main {
+        height: 1000px;
+        background-color: #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <span>header</span>
+      <a href="#footerTitle">goto footer</a>
+      <button id="scrollToBottom">scroll to bottom</button>
+    </header>
+    <main>
+      <h6>主体</h6>
+      <button id="scrollBy100">scrollBy 100</button>
+    </main>
+    <footer id="footer">
+      <h1 id="footerTitle">底部</h1>
+      <span>底部</span>
+      <a href="#">back to top</a>
+      <a href="#top">back to top</a>
+    </footer>
+
+    <script>
+      const scrollToBottomBtn = document.querySelector('#scrollToBottom');
+      scrollToBottomBtn.addEventListener('click', () => {
+        window.scrollTo({
+          left: 0,
+          top: 100000,
+          behavior: 'smooth'
+        });
+      });
+      const scrollBy100Btn = document.querySelector('#scrollBy100');
+      scrollBy100Btn.addEventListener('click', () => {
+        window.scrollBy({
+          left: 0,
+          top: 100,
+          behavior: 'smooth'
+        });
+      });
+    </script>
+  </body>
+</html>

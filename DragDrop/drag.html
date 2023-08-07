@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>通过拖拽实现列表顺序变化</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      .container {
+        width: 500px;
+        border: 1px solid #ccc;
+        padding: 8px;
+        margin: 100px 0 0 50px;
+        list-style: none;
+      }
+      .container li {
+        height: 41px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        line-height: 40px;
+        margin-bottom: 4px;
+        transition: all 0.2s linear;
+      }
+    </style>
+  </head>
+  <body>
+    <ul class="container">
+      <!-- <li></li> -->
+    </ul>
+    <button id="add">append</button>
+    <h4>list 结果</h4>
+    <p id="list"></p>
+    <script>
+      let list = [{ item: 1 }, { item: 2 }, { item: 3 }, { item: 4 }, { item: 5 }, { item: 6 }];
+      let appendToFirst = false;
+      const container = document.querySelector('.container');
+      const listResultEl = document.querySelector('#list');
+      initList(list);
+
+      let dragTarget = null;
+      container.addEventListener('dragstart', e => {
+        const target = findDraggableParent(e.target);
+        if (target) {
+          dragTarget = target;
+        }
+      });
+      container.addEventListener('dragend', e => {
+        dropHandler(e);
+      });
+      container.addEventListener('dragover', e => {
+        e.preventDefault();
+
+        const top = container.firstChild.getBoundingClientRect().top;
+        if (e.clientY < top) {
+          appendToFirst = true;
+          setActiveElStyle(container.firstChild);
+          return;
+        }
+        appendToFirst = false;
+      });
+      container.addEventListener('dragenter', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const target = findDraggableParent(e.target);
+        // 可以做一些高亮的操作
+        if (target) {
+          setActiveElStyle(target);
+        }
+      });
+      container.addEventListener('dragleave', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        // 可以做一些样式重置的操作
+        const target = findDraggableParent(e.target);
+        // 可以做一些高亮的操作
+        if (target) {
+          resetActiveElStyle(target);
+        }
+      });
+
+      container.addEventListener('drop', e => {
+        dropHandler(e);
+      });
+
+      function dropHandler(e) {
+        // 阻止一些默认事件， 比如图片预览，打开链接等功能
+        e.preventDefault();
+        console.log(appendToFirst, dragTarget);
+        if (appendToFirst && dragTarget) {
+          dragTarget.remove();
+          const target = container.firstChild;
+          container.insertBefore(dragTarget, target);
+          getNewList();
+          appendToFirst = false;
+          resetActiveElStyle(target);
+          return;
+        }
+
+        const target = findDraggableParent(e.target);
+        if (!target) return;
+        if (target) {
+          resetActiveElStyle(target);
+        }
+
+        if (target === dragTarget) {
+          return;
+        }
+
+        let nextSibling = target.nextSibling;
+
+        if (nextSibling === dragTarget) {
+          return;
+        }
+
+        dragTarget.remove();
+        if (nextSibling) {
+          container.insertBefore(dragTarget, nextSibling);
+        } else {
+          container.appendChild(dragTarget);
+        }
+        getNewList();
+      }
+
+      function initList(list) {
+        clearChild(container);
+        const fragment = document.createDocumentFragment();
+        list.forEach((item, index) => {
+          const li = document.createElement('li');
+          li.textContent = JSON.stringify(item);
+          li.setAttribute('draggable', 'true');
+          li.setAttribute('data-index', index);
+          li.classList.add('drag-item');
+          //   const div = document.createElement('div');
+          //   div.textContent = item;
+          //   li.appendChild(div);
+          fragment.appendChild(li);
+        });
+        container.appendChild(fragment);
+      }
+      function clearChild(el) {
+        while (el.firstChild) {
+          el.firstChild.remove();
+        }
+      }
+
+      function findDraggableParent(
+        el,
+        predicate = el => {
+          try {
+            return el.getAttribute('draggable') === 'true';
+          } catch (error) {
+            return false;
+          }
+        }
+      ) {
+        if (!el) return null;
+        let target = el;
+        while (target) {
+          if (predicate(target)) {
+            break;
+          } else {
+            target = target.parentNode;
+          }
+        }
+        return target;
+      }
+
+      function getNewList() {
+        const liList = container.querySelectorAll('li.drag-item');
+        const result = [];
+        for (let i = 0, len = liList.length; i < len; i++) {
+          const index = liList[i].dataset.index - 0;
+          result.push(list[index]);
+        }
+        console.log('result = ', result);
+        console.log('list = ', list);
+        listResultEl.textContent = result.map(_ => _.item).join(',');
+        return result;
+      }
+
+      function setActiveElStyle(el) {
+        // console.log('setActiveElStyle', el);
+        if (appendToFirst) {
+          // el.style.borderTopColor = 'red';
+          el.style.marginTop = '40px';
+        } else {
+          // el.style.borderBottomColor = 'red';
+          el.style.marginBottom = '40px';
+        }
+      }
+      function resetActiveElStyle(el) {
+        console.log('resetActiveElStyle', el);
+        if (el) {
+          el.style.borderColor = '#ccc';
+          el.style.borderTopColor = '#ccc';
+          el.style.borderBottomColor = '#ccc';
+          el.style.marginBottom = '4px';
+          el.style.marginTop = '0';
+        }
+      }
+
+      const add = document.querySelector('#add');
+      add.addEventListener('click', () => {
+        list.push({ item: list.length + 1 });
+        initList(list);
+
+        list = getNewList();
+      });
+    </script>
+  </body>
+</html>

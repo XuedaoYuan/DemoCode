@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>drag4通过拖拽实现列表顺序变化</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      .container {
+        width: 100%;
+        max-width: 600px;
+        /* padding: 100px 0; */
+        /* border: 1px solid #ccc; */
+        list-style: none;
+        position: relative;
+      }
+      .child-item {
+        height: 41px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        line-height: 40px;
+        margin-bottom: 4px;
+        transition: margin 0.1s linear;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <ul class="container">
+      <!-- <li></li> -->
+    </ul>
+    <!-- <button id="add">append</button>
+    <h4>list 结果</h4>
+    <p id="list"></p> -->
+    <script>
+      let list = [{ item: 1 }, { item: 2 }, { item: 3 }, { item: 4 }, { item: 5 }, { item: 6 }];
+      let liList = [];
+      let appendToFirst = false;
+      let appendToLast = false;
+      let insertBeforeReferenceNode = null;
+      let zIndex = 10;
+      let disX = 0,
+        disY = 0;
+
+      const body = document.body;
+      const container = document.querySelector('.container');
+      const listResultEl = document.querySelector('#list');
+      initList(list);
+
+      let dragTarget = null;
+      container.addEventListener('touchstart', e => {
+        e.preventDefault();
+
+        const target = findDraggableParent(e.target);
+        if (target) {
+          dragTarget = target;
+          const touch = e.touches[0];
+          const { clientX, clientY } = touch;
+          const { top, left } = dragTarget.getBoundingClientRect();
+          disX = left - clientX;
+          disY = top - clientY;
+          container.appendChild(dragTarget);
+          setPositionAbsolute(dragTarget);
+          moveHandler(e);
+        }
+      });
+      container.addEventListener('touchmove', moveHandler);
+
+      container.addEventListener('touchend', touchEndHandler);
+
+      function moveHandler(event) {
+        event.preventDefault();
+        const e = event.touches[0];
+
+        const { clientX, clientY } = e;
+
+        if (dragTarget) {
+          dragTarget.style.left = clientX + disX + 'px';
+          dragTarget.style.top = clientY + +disY + 'px';
+        }
+
+        // return;
+        // 判断应该放入那里
+        // 判断鼠标最终的落点， 是在各个子元素的哪个位置
+        /*
+              主要是是三个位置
+              1、顶部
+              2、中间
+              3、底部
+              */
+        const liList2 = [...liList].filter(el => el !== dragTarget);
+
+        for (let i = 0, len = liList2.length; i < len; i++) {
+          const liEl = liList2[i];
+          const { top, height } = liEl.getBoundingClientRect();
+          const clientY = e.clientY;
+          if (i === 0) {
+            if (clientY <= top + height / 2) {
+              // 说明需要插入到最上面
+              appendToFirst = true;
+              appendToLast = false;
+              setActiveElStyle(liEl);
+              insertBeforeReferenceNode = liEl;
+              break;
+            }
+          }
+          if (i === len - 1) {
+            if (clientY > top + height / 2) {
+              // 说明需要插入到底部
+              // container.appendChild(dragTarget);
+              appendToFirst = false;
+              appendToLast = true;
+              setActiveElStyle(liEl);
+              insertBeforeReferenceNode = null;
+              break;
+            }
+          }
+
+          const nextLiEl = liList2[i + 1];
+          if (liEl && nextLiEl) {
+            const { top: nextTop, height: nextHeight } = nextLiEl.getBoundingClientRect();
+            const middleLine = top + height / 2;
+            const nextMiddleLine = nextTop + nextHeight / 2;
+            if (middleLine < clientY && clientY <= nextMiddleLine) {
+              // 说明在这两个元素中间
+              // container.insertBefore(dragTarget, nextLiEl);
+              appendToFirst = false;
+              appendToLast = false;
+              insertBeforeReferenceNode = nextLiEl;
+              setActiveElStyle(liEl);
+            }
+          }
+        }
+      }
+
+      function touchEndHandler(e) {
+        // 阻止一些默认事件， 比如图片预览，打开链接等功能
+        e.preventDefault();
+        removeFlag = true;
+
+        setTimeout(() => {
+          /* dragTarget 表示当前拖动的是哪个元素 */
+          //   const target = e.target; // 表示当前放置的元素
+          //   if (!target) return;
+          /* if (target === dragTarget) {
+            return;
+          } */
+
+          console.log('dragTarget', dragTarget);
+          console.log('insertBeforeReferenceNode', insertBeforeReferenceNode);
+          if (dragTarget === insertBeforeReferenceNode) {
+            dragTarget.style.position = 'relative';
+            dragTarget.style.left = '0';
+            dragTarget.style.top = '0';
+
+            resetActiveElStyle();
+            return;
+          }
+          if (appendToLast) {
+            dragTarget.remove();
+            container.appendChild(dragTarget);
+            appendToLast = false;
+          } else {
+            if (insertBeforeReferenceNode) {
+              dragTarget.remove();
+              container.insertBefore(dragTarget, insertBeforeReferenceNode);
+            }
+          }
+          dragTarget.style.position = 'relative';
+          dragTarget.style.left = '0';
+          dragTarget.style.top = '0';
+
+          liList = container.querySelectorAll('li.child-item');
+
+          getNewList();
+          resetActiveElStyle();
+        });
+      }
+
+      function setPositionAbsolute(el) {
+        const { top, left } = el.getBoundingClientRect();
+        el.style.position = 'absolute';
+        el.style.left = left + 'px';
+        el.style.top = top + 'px';
+        el.style.zIndex = zIndex++;
+      }
+
+      function initList(list) {
+        clearChild(container);
+        const fragment = document.createDocumentFragment();
+        list.forEach((item, index) => {
+          const li = document.createElement('li');
+          li.textContent = JSON.stringify(item);
+          //   li.setAttribute('draggable', 'true');
+          li.setAttribute('data-item', '1');
+          li.setAttribute('data-index', index);
+          li.classList.add('child-item');
+          li.style.position = 'relative';
+          li.style.zIndex = zIndex++;
+          fragment.appendChild(li);
+        });
+        container.appendChild(fragment);
+        liList = container.querySelectorAll('li.child-item');
+      }
+      function clearChild(el) {
+        while (el.firstChild) {
+          el.firstChild.remove();
+        }
+      }
+
+      function findDraggableParent(
+        el,
+        predicate = el => {
+          try {
+            return el.dataset.item === '1';
+          } catch (error) {
+            return false;
+          }
+        }
+      ) {
+        if (!el) return null;
+        let target = el;
+        while (target) {
+          if (predicate(target)) {
+            break;
+          } else {
+            target = target.parentNode;
+          }
+        }
+        return target;
+      }
+
+      function getNewList() {
+        const result = [];
+        for (let i = 0, len = liList.length; i < len; i++) {
+          const index = liList[i].dataset.index - 0;
+          result.push(list[index]);
+        }
+        // listResultEl.textContent = ;
+        console.log(result.map(_ => _.item).join(','));
+        return result;
+      }
+
+      function setActiveElStyle(el) {
+        resetActiveElStyle();
+        if (appendToFirst) {
+          el.style.marginTop = '40px';
+        } else {
+          el.style.marginBottom = '40px';
+        }
+      }
+      function resetActiveElStyle() {
+        for (let i = 0, len = liList.length; i < len; i++) {
+          const el = liList[i];
+          el.style.borderColor = '#ccc';
+          el.style.borderTopColor = '#ccc';
+          el.style.borderBottomColor = '#ccc';
+          el.style.marginBottom = '4px';
+          el.style.marginTop = '0';
+        }
+      }
+
+      /* const add = document.querySelector('#add');
+      add.addEventListener('click', () => {
+        list.push({ item: list.length + 1 });
+        initList(list);
+
+        list = getNewList();
+      }); */
+    </script>
+  </body>
+</html>
