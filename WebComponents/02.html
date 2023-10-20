@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <custom-square id="CustomSquareRef" l="100" c="red"></custom-square>
+    <script>
+      class CustomSquare extends HTMLElement {
+        static get observedAttributes() {
+          return ['c', 'l'];
+        }
+        constructor() {
+          super();
+
+          const div = document.createElement('div');
+          const style = document.createElement('style');
+          div.textContent = 'square';
+
+          this.appendChild(style);
+          this.appendChild(div);
+        }
+        connectedCallback() {
+          console.log('connectedCallback');
+          updateStyle(this);
+        }
+        /* disconnectedCallback()和adoptedCallback()回调函数只是简单地将消息发送到控制台，提示我们元素什么时候从 DOM 中移除、或者什么时候移动到不同的页面： */
+        disconnectedCallback() {}
+        adoptedCallback() {}
+        /* 每当元素的属性变化时，`attributeChangedCallback()`回调函数会执行。正如它的属性所示，我们可以查看属性的名称、旧值与新值，以此来对元素属性做单独的操作。
+        需要注意的是，如果需要在元素属性变化后，触发attributeChangedCallback()回调函数，你必须监听这个属性。
+        这可以通过定义observedAttributes() get 函数来实现，observedAttributes()函数体内包含一个 return 语句，返回一个数组，包含了需要监听的属性名称：
+        */
+        attributeChangedCallback(name, oldValue, newValue) {
+          console.log('attributeChangedCallback');
+          console.log(name, oldValue, newValue);
+          updateStyle(this);
+        }
+      }
+
+      function updateStyle(el) {
+        const style = el.querySelector('style');
+        style.textContent = `
+            div {
+                width: ${el.getAttribute('l')}px;
+                height: ${el.getAttribute('l')}px;
+                background-color: ${el.getAttribute('c')};
+            }
+        `;
+      }
+
+      window.customElements.define('custom-square', CustomSquare);
+      const CustomSquareRef = document.querySelector('#CustomSquareRef');
+      setTimeout(() => {
+        CustomSquareRef.setAttribute('l', '200');
+        CustomSquareRef.setAttribute('c', 'green');
+      }, 1000);
+    </script>
+  </body>
+</html>

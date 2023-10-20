@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*  try {
+        console.log(a);
+      } catch (error) {
+        console.error(error); // ReferenceError: a is not defined
+      }
+      if (false) {
+        a = 10;
+      }
+      console.log(a); // 10
+      console.log(window.a); // 10 */
+
+      console.log(window.a, a); // undefined undefined
+      if (true) {
+        if (true) {
+          console.log(window.a, a); // undefined ƒ a() {}
+          function a() {}
+          a = 50;
+          console.log(window.a, a); // ƒ a() {} 50
+        }
+      }
+      console.log(window.a, a); // ƒ a() {} ƒ a() {}
+
+      /* 
+      
+        ESStack = [
+            BlockContext: {
+                AO: {
+                    a: ƒ a() {}
+                },
+                scope: [BlockContext.AO, GlobalContext.AO]
+            },
+            GlobalContext: {
+                AO: {
+                    a: undefined
+                },
+                scope: [GlobalContext.AO]
+            }
+        ]
+
+        解释完 a = 50, 注意这一句赋值和函数声明不同， 不会给全局上下赋值块内的属性
+        ESStack = [
+            BlockContext: {
+                AO: {
+                    a: 50
+                },
+                scope: [BlockContext.AO, GlobalContext.AO]
+            },
+            GlobalContext: {
+                AO: {
+                    a: undefined
+                },
+                scope: [GlobalContext.AO]
+            }
+        ]
+
+        解释完 a = 50 function a() {}
+        ESStack = [
+            BlockContext: {
+                AO: {
+                    a: 50
+                },
+                scope: [BlockContext.AO, GlobalContext.AO]
+            },
+            GlobalContext: {
+                AO: {
+                    a: 50
+                },
+                scope: [GlobalContext.AO]
+            }
+        ]
+      */
+    </script>
+  </body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <template id="person_temp">
+      <style>
+        :host {
+          display: block;
+          background-color: #ccc;
+        }
+        .username {
+          color: red;
+        }
+      </style>
+      <h4>人员基本信息</h4>
+      <ul>
+        <li class="username"></li>
+        <li class="sex"></li>
+      </ul>
+    </template>
+    <person-card username="xdyuan" sex="男"></person-card>
+    <script>
+      class PersonCard extends HTMLElement {
+        constructor() {
+          super();
+          const content = document.querySelector('#person_temp').content.cloneNode(true);
+
+          // 获取内部的username元素
+          const userNameEl = content.querySelector('.username');
+          // 通过this.getAttribute('username')获取外部attr
+          userNameEl.textContent = this.getAttribute('username') || '';
+          const sexEl = content.querySelector('.sex');
+          sexEl.textContent = this.getAttribute('sex') || '';
+
+          const shadowRoot = this.attachShadow({ mode: 'closed' });
+          shadowRoot.appendChild(content);
+        }
+      }
+      window.customElements.define('person-card', PersonCard);
+    </script>
+  </body>
+</html>

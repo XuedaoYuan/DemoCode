@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <template id="button_temp">
+      <style>
+        .my-button {
+          display: inline-block;
+          line-height: 1;
+          white-space: nowrap;
+          cursor: pointer;
+          background: #fff;
+          border: 1px solid #dcdfe6;
+          color: #606266;
+          -webkit-appearance: none;
+          text-align: center;
+          box-sizing: border-box;
+          outline: none;
+          margin: 0;
+          transition: 0.1s;
+          font-weight: 500;
+          -moz-user-select: none;
+          -webkit-user-select: none;
+          -ms-user-select: none;
+          padding: 12px 20px;
+          font-size: 14px;
+          border-radius: 4px;
+        }
+        .my-button:hover,
+        .my-button:focus {
+          color: #409eff;
+          border-color: #c6e2ff;
+          background-color: #ecf5ff;
+        }
+
+        .my-button:active {
+          color: #3a8ee6;
+          border-color: #3a8ee6;
+          outline: none;
+        }
+        .my-button.my-button--disabled {
+          color: #c0c4cc;
+          cursor: not-allowed;
+          background-image: none;
+          background-color: #fff;
+          border-color: #ebeef5;
+        }
+      </style>
+      <button class="my-button">
+        <slot></slot>
+      </button>
+    </template>
+    <my-button id="my_button">点我</my-button>
+    <script>
+      class MyButton extends HTMLElement {
+        constructor() {
+          super();
+          const _this = this;
+          const content = document.querySelector('#button_temp').content.cloneNode(true);
+
+          const shadowRoot = this.attachShadow({ mode: 'closed' });
+          shadowRoot.appendChild(content);
+
+          this.$clickHandler = this.getAttribute('on-click');
+
+          this.$buttonEl = shadowRoot.querySelector('.my-button');
+
+          this.$onClick = function (e) {
+            const clickEvent = new CustomEvent('on-click', {
+              detail: e,
+              bubbles: true,
+              cancelable: true
+            });
+            // window[_this.$clickHandler](e);
+            _this.dispatchEvent(clickEvent);
+          };
+          this.$buttonEl.addEventListener('click', this.$onClick);
+        }
+        disconnectedCallback() {
+          this.$buttonEl.removeEventListener('click', this.$onClick);
+        }
+      }
+      window.customElements.define('my-button', MyButton);
+
+    </script>
+    <script>
+      const my_button = document.querySelector('#my_button');
+      my_button.addEventListener('on-click', e => {
+        console.log(e);
+      });
+
+    </script>
+  </body>
+</html>

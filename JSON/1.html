@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* const str = '{"P":5}';
+      const ret = JSON.parse(str, (k, v) => {
+        if (k === '') return v; //如果到了最顶层，则直接返回属性值，
+        return v * 2; // 否则将属性值变为原来的 2 倍。
+      });
+      console.log(ret);// {P: 10} */
+      const map = new Map();
+      map.set('y', 2);
+      const obj = {
+        x: 1,
+        map: map
+      };
+      console.log(JSON.stringify(obj)); // '{"x":1,"d":"2021-12-31T16:00:00.000Z"}'
+    </script>
+  </body>
+</html>

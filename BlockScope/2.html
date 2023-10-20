@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* 
+        
+        [
+            globalAO = {},
+            blockAO = {
+                a: function(){}
+            }
+        ]
+        */
+      console.log(window.a, a);
+      {
+        console.log(a);
+        function a() {}
+        a = 50;
+        function a() {}// 每执行到这一行，就把块内的变量a赋值给window.a
+
+        console.log(a); // 50
+      }
+      console.log(window.a, a); // function
+    </script>
+  </body>
+</html>

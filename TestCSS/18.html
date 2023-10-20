@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="num">0</div>
+    <script>
+      function changeNum(config, cb = () => {}) {
+        let { from, to, duration = 1000 } = config;
+        if (from === to) {
+          cb({
+            data: to,
+            done: true
+          });
+          return;
+        }
+        const step = Math.floor((to - from) / 20);
+        const direction = to - from >= 0; // true 表示正向
+        let start = undefined;
+        cb({
+          data: from,
+          done: false
+        });
+        function callback(timestamp) {
+          if (start === undefined) {
+            start = timestamp;
+          }
+          let elapsed = timestamp - start;
+          if (elapsed >= duration) {
+            cb({
+              data: to,
+              done: true
+            });
+            return;
+          }
+          let num;
+          if (direction) {
+            num = Math.max(Math.floor(Math.random() * step), 1);
+          } else {
+            num = Math.min(Math.floor(Math.random() * step), -1);
+          }
+          from = from + num;
+          if ((direction && from >= to) || (!direction && from <= to)) {
+            from = to;
+          }
+          if (from === to) {
+            console.log(elapsed);
+            cb({
+              data: from,
+              done: true
+            });
+            return;
+          }
+          cb({
+            data: from,
+            done: false
+          });
+          window.requestAnimationFrame(callback);
+        }
+        window.requestAnimationFrame(callback);
+      }
+
+      const el = document.querySelector('#num');
+      changeNum(
+        {
+          from: 0,
+          to: 1000,
+          duration: 3000
+        },
+        param => {
+          el.textContent = param.data.toString();
+        }
+      );
+    </script>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+ESStack = [
+    BlockContext: {
+        AO: {
+            a: ƒ a() {}
+        },
+        scope: [BlockContext.AO, GlobalContext.AO]
+    },
+    GlobalContext: {
+        AO: {
+            a: undefined
+        },
+        scope: [GlobalContext.AO]
+    }
+]
+解释完第一次声明function a() {}
+ESStack = [
+    BlockContext: {
+        AO: {
+            a: ƒ a() {}
+        },
+        scope: [BlockContext.AO, GlobalContext.AO]
+    },
+    GlobalContext: {
+        AO: {
+            a: ƒ a() {}
+        },
+        scope: [GlobalContext.AO]
+    }
+]
+解释完 a = 10;
+ESStack = [
+    BlockContext: {
+        AO: {
+            a: 10
+        },
+        scope: [BlockContext.AO, GlobalContext.AO]
+    },
+    GlobalContext: {
+        AO: {
+            a: ƒ a() {}
+        },
+        scope: [GlobalContext.AO]
+    }
+]
+解释完第二次声明function a() {}
+ESStack = [
+    BlockContext: {
+        AO: {
+            a: 10
+        },
+        scope: [BlockContext.AO, GlobalContext.AO]
+    },
+    GlobalContext: {
+        AO: {
+            a: 10
+        },
+        scope: [GlobalContext.AO]
+    }
+]
+解释完a = 20;
+ESStack = [
+    BlockContext: {
+        AO: {
+            a: 20
+        },
+        scope: [BlockContext.AO, GlobalContext.AO]
+    },
+    GlobalContext: {
+        AO: {
+            a: 10
+        },
+        scope: [GlobalContext.AO]
+    }
+]

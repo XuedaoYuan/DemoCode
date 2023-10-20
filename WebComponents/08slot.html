@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <hello-world>
+      <span>HELLO, WORLD!</span>
+    </hello-world>
+    <hello-world>
+        <p>ss</p>
+    </hello-world>
+
+    <template id="hello">
+      <style>
+        h1.title {
+          color: red;
+          margin: 0;
+          text-align: center;
+        }
+      </style>
+      <h1 class="title">
+        <slot>hello, world!</slot>
+      </h1>
+    </template>
+    <script>
+      window.customElements.define(
+        'hello-world',
+        class extends HTMLElement {
+          constructor() {
+            super();
+            const helloTemp = document.querySelector('#hello');
+            const content = helloTemp.content.cloneNode(true);
+
+            const shadowRoot = this.attachShadow({ mode: 'closed' });
+            shadowRoot.appendChild(content);
+          }
+        }
+      );
+    </script>
+  </body>
+</html>

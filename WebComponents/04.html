@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      p {
+        color: red;
+      }
+    </style>
+    <p>outer paragraph</p>
+    <work-count class="word-count-container"></work-count>
+    <script>
+      class WordCount extends HTMLElement {
+        constructor() {
+          super();
+          const shadow = this.attachShadow({ mode: 'closed' });
+
+          // 这个样式是私有的， 不会影响外部的元素
+          const style = document.createElement('style');
+          style.textContent = `
+            p {
+                color: green;
+                font-size: 20px;
+            }
+          `;
+
+          const p = document.createElement('p');
+          p.textContent = 'word count';
+
+          shadow.appendChild(style);
+          shadow.appendChild(p);
+
+          //   this.appendChild(shadow);
+        }
+      }
+
+      window.customElements.define('work-count', WordCount);
+    </script>
+  </body>
+</html>

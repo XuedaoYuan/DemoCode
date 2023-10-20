@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+        /* var tmp = 10;
+        if (true) {
+          tmp = 20; // Uncaught ReferenceError: Cannot access 'tmp' before initialization
+          let tmp;
+        } */
+
+        /* if (true) {
+          var a = 10;
+        }
+        console.log(a, window.a);// 10 10 */
+
+        /* var tmp = '1';
+        var tmp2 = '3'
+        function foo() {
+          console.log(tmp, tmp2);
+          if (false) {
+            var tmp = '2';
+          }
+        }
+        foo();// undefined '3' */
+
+        /* for (var i = 0; i < 5; i++) {}
+        console.log(i); // 5
+        for (var i = 0; i < 6; i++) {}
+        console.log(i);
+        {
+          var a = 2;
+          var a = 1;
+        } */
+
+        /* function foo() {
+          let n = 6;
+          if (true) {
+            let n = 10;
+          }
+          console.log(n);  // 6
+        }
+        foo(); */
+        /*  (function () {
+          var tmp = 1;
+        })();
+
+        {
+          let tmp = 1;
+        } */
+        /* if (false) {
+          function f() {
+            console.log('1');
+          }
+        }
+
+        f(); */
+        /* function f() {
+          console.log('outside');
+        }
+        var a = 10;
+        (function () {
+          if (false) {
+            function f() {
+              console.log('inside');
+            }
+          }
+          try {
+            f();
+          } catch (error) {
+            console.error(error); // TypeError: f is not a function
+          }
+          console.log(a); // 10
+          window.f(); // 'outside'
+        })(); */
+
+        /*  {
+          function f() {
+            console.log(1);
+          }
+        }
+        f(); */
+
+      // 'let' declarations can only be declared inside a block
+        // if(true) let x = 1; // Lexical declaration cannot appear in a single-statement context
+        
+    </script>
+  </body>
+</html>

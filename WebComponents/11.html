@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <template id="button_temp">
+      <button class="xd-button"></button>
+    </template>
+
+    <my-button label="click me"></my-button>
+
+    <script>
+      class MyButton extends HTMLElement {
+        constructor() {
+          super();
+          const content = document.querySelector('#button_temp').content.cloneNode(true);
+
+          const shadowRoot = this.attachShadow({ mode: 'closed' });
+          this._shadowRoot = shadowRoot;
+          this._shadowRoot.appendChild(content);
+
+          this.$button = this._shadowRoot.querySelector('.xd-button');
+        }
+        get label() {
+          return this.getAttribute('label') || '按钮';
+        }
+        get list() {
+          return this.getAttribute('list');
+        }
+        set list(newList) {
+          this.setAttribute('list', newList);
+        }
+        static get observedAttributes() {
+          return ['label', 'list'];
+        }
+        attributeChangedCallback(name, oldVal, newVal) {
+          this.render();
+        }
+        render() {
+          console.log(this.list);
+          this.$button.textContent = this.label;
+        }
+      }
+      window.customElements.define('my-button', MyButton);
+
+      const btn = document.querySelector('my-button');
+      btn.list = [];
+      setTimeout(() => {
+        btn.list = [1, 2, 3];
+        btn.setAttribute('label', 'new click');
+      }, 1000);
+    </script>
+  </body>
+</html>

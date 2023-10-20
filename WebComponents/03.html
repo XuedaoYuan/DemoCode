@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 使用时，需要使用is属性 -->
+    <p is="work-count"></p>
+    <style>
+      p {
+        font-size: 30px;
+      }
+    </style>
+    <script>
+      // 类继承自 HTMLParagraphElement
+      class WordCount extends HTMLParagraphElement {
+        constructor() {
+          super();
+
+          const p = document.createElement('p');
+          p.textContent = 'word count';
+
+          this.appendChild(p);
+        }
+        connectedCallback() {
+          console.log('connectedCallback');
+        }
+        attributeChangedCallback() {
+          console.log('attributeChangedCallback');
+        }
+      }
+      // 第三个参数表明自己继承自p
+      window.customElements.define('work-count', WordCount, { extends: 'p' });
+    </script>
+  </body>
+</html>

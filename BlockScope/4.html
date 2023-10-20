@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* if (false) {
+        a(); // 'function a'
+        function a() {
+          console.log('function a');
+        }
+        var a = 10; 
+        console.log(a); // 10
+      } */
+
+      //   function foo() {
+      //     console.log('foo');
+      //   }
+
+      //   var foo;
+      //   console.log(foo); */
+
+      //   {
+      //     function a() {}
+      //     a = 50;
+      //   }
+      //   console.log(a); // function a
+      //   {
+      //     b = 50;
+      //     function b() {}
+      //   }
+      //   console.log(b); // 50
+      console.log(window.a, a); // undefined undefined
+      {
+        console.log(window.a, a); // undefined ƒ a() {}
+        function a() {
+          /* 1 */
+        }
+        console.log(window.a, a); // ƒ a() {}  ƒ a() {}
+        a = 10;
+        console.log(window.a, a); // ƒ a() {}  10
+        function a() {
+          /* 2 */
+        }
+        console.log(window.a, a); // 10 10
+        a = 20;
+        console.log(window.a, a); // 10 20
+      }
+      console.log(window.a, a); // 10 10
+    </script>
+  </body>
+</html>

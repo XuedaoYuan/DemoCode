@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <work-count class="word-count-container"></work-count>
+    <script>
+      class WordCount extends HTMLElement {
+        constructor() {
+          super();
+
+          const p = document.createElement('p');
+          p.textContent = 'word count';
+
+          this.appendChild(p);
+        }
+        connectedCallback() {
+          console.log('connectedCallback');
+        }
+        attributeChangedCallback() {
+          console.log('attributeChangedCallback');
+        }
+      }
+
+      window.customElements.define('work-count', WordCount);
+    </script>
+  </body>
+</html>

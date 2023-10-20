@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div style="width: 300px">
+      <my-select
+        id="select1"
+        value=""
+        options='[{"value":1,"label":"11"},{"value":2,"label":"22"},{"value":3,"label":"33"},{"value":4,"label":"44"}]'
+      >
+      </my-select>
+    </div>
+    <script src="./MySelect.js"></script>
+    <script>
+      const select1 = document.querySelector('#select1');
+      let selectValue = '2';
+      select1.setAttribute('value', selectValue);
+      select1.addEventListener('on-change', event => {
+        selectValue = event.detail;
+        select1.setAttribute('value', selectValue);
+      });
+    </script>
+  </body>
+</html>
